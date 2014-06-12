@@ -108,74 +108,62 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  if (n < 2) {
-    return 1;
-  } else {
-    var board = new Board()
+  var count = 0;
 
-    var solutionCount = 0; //fixme
+  var helper = function(remaining, arr) {
 
-    var boardCreator = function(array){
-
-      var board = [];
-      for(var i = 0; i < array.length; i++){
-        board.push([]);
-      }
-
-      for(var i = 0; i < array.length; i++){
-        var column = board[i];
-        for(var k = 0; k < array.length; k++){
-          if(k === array[i]){
-            column.push(1);
-          }else{
-            column.push(0);
+    if (remaining === 0) {
+      // if (!arr.hasDiagonalConflicts()) {
+        count++;
+        // console.log(arr);
+      // }
+    } else {
+      for (var i = 0; i < n; i++) {
+        if (arr.indexOf(i) === -1) {
+          arr.push(i);
+          if (!arr.hasDiagonalConflicts()) {
+            helper(remaining - 1, arr);
           }
+          arr.pop();
         }
       }
-      return board;
-    };
-    /*
-      var dices = function(n) {
+    }
+  };
 
-        var results = [];
-        var helper = function(dice, arr) {
-          if (dice === 0) {
-            results.push(arr);
-          } else {
-            for (var i = 1; i <= n; i++) {
-              if (arr.indexOf(i) === -1) {
-              arr.push(i);
-              helper(dice - 1, arr.slice());
-              arr.pop();
-
-              }
-            }
-          }
-        }
-        helper(n, []);
-        return results;
-      }
-    */
-
-    var countHelper = function(rows, array){
-      if(rows === 0 ){
-        var board = new Board(boardCreator(array));
-        if (!board.hasAnyQueensConflicts()) {
-          solutionCount++;
-        }
-      } else {
-        for(var i = 0; i < n; i++){
-          if(array.indexOf(i) === -1){
-            array.push(i);
-            countHelper(rows-1, array.slice());
-            array.pop();
-          }
-        }
-      }
-    };
-
-    countHelper(n, []);
-    console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-    return solutionCount;
-  }
+  helper(n, []);
+  return count;
 };
+// function swap(arr, a,b){
+//   var temp = arr[a];
+//   arr[a]=arr[b];
+//   arr[b]=temp;
+// }
+
+// function factorial(n) {
+//   var val = 1;
+//   for (var i=1; i<n; i++) {
+//     val *= i;
+//   }
+//   return val;
+// }
+
+
+// function permute(perm, func){
+//   var total = factorial(perm.length);
+
+//   for (var j=0, i=0, inc=1;  j<total;  j++, inc*=-1, i+=inc) {
+
+//     for (; i<perm.length-1 && i>=0; i+=inc) {
+//       func.call(perm);
+//       swap (perm, i, i+1);
+//     }
+
+//     func.call(perm);
+
+//     if (inc === 1) {
+//       swap(perm, 0,1);
+//     } else {
+//       swap(perm, perm.length-1, perm.length-2);
+//     }
+//   }
+// }
