@@ -110,7 +110,7 @@ window.findNQueensSolution = function(n) {
 window.countNQueensSolutions = function(n) {
   var count = 0;
 
-  var helper = function(remaining, arr) {
+  var helper = function(remaining, arr, obj) {
 
     if (remaining === 0) {
       // if (!arr.hasDiagonalConflicts()) {
@@ -119,18 +119,20 @@ window.countNQueensSolutions = function(n) {
       // }
     } else {
       for (var i = 0; i < n; i++) {
-        if (arr.indexOf(i) === -1) {
+        if (!obj.hasOwnProperty(i)) {
           arr.push(i);
+          obj[i] = true;
           if (!arr.hasDiagonalConflicts()) {
-            helper(remaining - 1, arr);
+            helper(remaining - 1, arr,obj );
           }
           arr.pop();
+          delete obj[i];
         }
       }
     }
   };
 
-  helper(n, []);
+  helper(n, [], {});
   return count;
 };
 // function swap(arr, a,b){
