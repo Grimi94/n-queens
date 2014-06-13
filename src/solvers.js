@@ -81,10 +81,10 @@ window.findNQueensSolution = function(n) {
     return board;
   };
   var validSolution;
+    if (!board.hasAnyQueensConflicts()) {
   var countHelper = function(rows, array){
     if(rows === 0 ){
       var board = new Board(boardCreator(array));
-      if (!board.hasAnyQueensConflicts()) {
   //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
         if(n == 2){
           console.log(boardCreator(array));
@@ -109,63 +109,23 @@ window.findNQueensSolution = function(n) {
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   var count = 0;
+  var all = Math.pow(2, n) - 1;
 
-  var helper = function(remaining, arr, obj) {
+  var helper = function(ld, cols, rd) {
 
-    if (remaining === 0) {
-      // if (!arr.hasDiagonalConflicts()) {
-        count++;
-        // console.log(arr);
-      // }
+    if (cols === all) {
+      count++;
     } else {
-      for (var i = 0; i < n; i++) {
-        if (!obj.hasOwnProperty(i)) {
-          arr.push(i);
-          obj[i] = true;
-          if (!arr.hasDiagonalConflicts()) {
-            helper(remaining - 1, arr,obj );
-          }
-          arr.pop();
-          delete obj[i];
-        }
+      var poss = ~(ld | cols| rd) & all;
+      while (poss) {
+        var bit = poss & (-poss);
+        poss ^= bit;
+        helper((ld|bit) << 1, cols|bit, (rd|bit) >> 1);
       }
     }
   };
 
-  helper(n, [], {});
+  helper(0,0,0);
   return count;
 };
-// function swap(arr, a,b){
-//   var temp = arr[a];
-//   arr[a]=arr[b];
-//   arr[b]=temp;
-// }
 
-// function factorial(n) {
-//   var val = 1;
-//   for (var i=1; i<n; i++) {
-//     val *= i;
-//   }
-//   return val;
-// }
-
-
-// function permute(perm, func){
-//   var total = factorial(perm.length);
-
-//   for (var j=0, i=0, inc=1;  j<total;  j++, inc*=-1, i+=inc) {
-
-//     for (; i<perm.length-1 && i>=0; i+=inc) {
-//       func.call(perm);
-//       swap (perm, i, i+1);
-//     }
-
-//     func.call(perm);
-
-//     if (inc === 1) {
-//       swap(perm, 0,1);
-//     } else {
-//       swap(perm, perm.length-1, perm.length-2);
-//     }
-//   }
-// }
