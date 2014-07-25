@@ -81,10 +81,10 @@ window.findNQueensSolution = function(n) {
     return board;
   };
   var validSolution;
+    if (!board.hasAnyQueensConflicts()) {
   var countHelper = function(rows, array){
     if(rows === 0 ){
       var board = new Board(boardCreator(array));
-      if (!board.hasAnyQueensConflicts()) {
   //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
         if(n == 2){
           console.log(boardCreator(array));
@@ -108,74 +108,24 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  if (n < 2) {
-    return 1;
-  } else {
-    var board = new Board()
+  var count = 0;
+  var all = Math.pow(2, n) - 1;
 
-    var solutionCount = 0; //fixme
+  var helper = function(ld, cols, rd) {
 
-    var boardCreator = function(array){
-
-      var board = [];
-      for(var i = 0; i < array.length; i++){
-        board.push([]);
+    if (cols === all) {
+      count++;
+    } else {
+      var poss = ~(ld | cols| rd) & all;
+      while (poss) {
+        var bit = poss & (-poss);
+        poss ^= bit;
+        helper((ld|bit) << 1, cols|bit, (rd|bit) >> 1);
       }
+    }
+  };
 
-      for(var i = 0; i < array.length; i++){
-        var column = board[i];
-        for(var k = 0; k < array.length; k++){
-          if(k === array[i]){
-            column.push(1);
-          }else{
-            column.push(0);
-          }
-        }
-      }
-      return board;
-    };
-    /*
-      var dices = function(n) {
-
-        var results = [];
-        var helper = function(dice, arr) {
-          if (dice === 0) {
-            results.push(arr);
-          } else {
-            for (var i = 1; i <= n; i++) {
-              if (arr.indexOf(i) === -1) {
-              arr.push(i);
-              helper(dice - 1, arr.slice());
-              arr.pop();
-
-              }
-            }
-          }
-        }
-        helper(n, []);
-        return results;
-      }
-    */
-
-    var countHelper = function(rows, array){
-      if(rows === 0 ){
-        var board = new Board(boardCreator(array));
-        if (!board.hasAnyQueensConflicts()) {
-          solutionCount++;
-        }
-      } else {
-        for(var i = 0; i < n; i++){
-          if(array.indexOf(i) === -1){
-            array.push(i);
-            countHelper(rows-1, array.slice());
-            array.pop();
-          }
-        }
-      }
-    };
-
-    countHelper(n, []);
-    console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-    return solutionCount;
-  }
+  helper(0,0,0);
+  return count;
 };
+
